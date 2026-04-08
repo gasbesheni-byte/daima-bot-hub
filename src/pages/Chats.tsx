@@ -1,5 +1,5 @@
+import { useNavigate } from "react-router-dom";
 import ChatPreview from "@/components/ChatPreview";
-import { toast } from "sonner";
 
 const MOCK_CHATS = [
   {
@@ -21,6 +21,8 @@ const MOCK_CHATS = [
 ];
 
 const Chats = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background pb-24 pt-4">
       <div className="px-5 pb-2">
@@ -33,22 +35,10 @@ const Chats = () => {
           <ChatPreview
             key={chat.id}
             {...chat}
-            onClick={() => toast("Chat opening soon", { description: "This feature needs Lovable Cloud!" })}
+            onClick={() => navigate(`/chat/${chat.id}`)}
           />
         ))}
       </div>
-
-      {MOCK_CHATS.length === 0 && (
-        <div className="flex flex-col items-center justify-center px-6 pt-20 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-peach">
-            <span className="text-2xl">💬</span>
-          </div>
-          <h3 className="font-display text-lg font-semibold text-foreground">No chats yet</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Start discovering people and your conversations will appear here.
-          </p>
-        </div>
-      )}
     </div>
   );
 };

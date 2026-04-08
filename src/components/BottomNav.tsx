@@ -12,8 +12,8 @@ const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Hide on onboarding
-  if (location.pathname === "/welcome") return null;
+  // Hide on onboarding and chat conversation
+  if (location.pathname === "/welcome" || location.pathname === "/onboarding" || location.pathname.startsWith("/chat/")) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/80 backdrop-blur-xl">
