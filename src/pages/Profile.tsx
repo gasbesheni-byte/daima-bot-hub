@@ -15,13 +15,13 @@ interface ProfileData {
 const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, avatar_url, location, icebreaker, interests")
+      .select("display_name, avatar_url, username")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
@@ -46,11 +46,11 @@ const Profile = () => {
     );
   }
 
-  const displayName = profile?.display_name || user.email?.split("@")[0] || "User";
-  const interests = profile?.interests || ["Hiking", "Coffee", "Photography"];
+  const displayName = profile?.display_name || profile?.username || user.email?.split("@")[0] || "User";
+  const interests = ["Hiking", "Coffee", "Photography"];
   const avatarUrl = profile?.avatar_url || "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=600&fit=crop&crop=face";
-  const location = profile?.location || "Nairobi, Kenya";
-  const icebreaker = profile?.icebreaker || "Sunsets from my balcony with a warm cup of chai — that's my happy place.";
+  const location = "Nairobi, Kenya";
+  const icebreaker = "Sunsets from my balcony with a warm cup of chai — that's my happy place.";
 
   return (
     <div className="min-h-screen bg-background pb-24 pt-4">
