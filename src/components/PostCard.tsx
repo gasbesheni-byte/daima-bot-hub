@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Heart, MessageCircle, Send } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface Comment {
   id: string;
@@ -24,24 +22,20 @@ interface PostCardProps {
   comments: Comment[];
   onToggleLike: () => void;
   onAddComment: (text: string) => void;
+  onExpandComments?: () => void;
 }
 
 const PostCard = ({
-  id,
-  user,
-  avatar,
-  image,
-  text,
-  likesCount,
-  commentsCount,
-  isLiked,
-  time,
-  comments,
-  onToggleLike,
-  onAddComment,
+  id, user, avatar, image, text, likesCount, commentsCount, isLiked, time, comments, onToggleLike, onAddComment, onExpandComments,
 }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
+
+  const handleToggleComments = () => {
+    const next = !showComments;
+    setShowComments(next);
+    if (next && onExpandComments) onExpandComments();
+  };
 
   const handleSubmitComment = () => {
     if (!commentText.trim()) return;
@@ -52,7 +46,10 @@ const PostCard = ({
   return (
     <div className="w-full rounded-2xl bg-card overflow-hidden shadow-[var(--shadow-card)]">
       <div className="flex items-center gap-2.5 p-3 pb-2">
-        <img src={avatar} alt={user} className="h-8 w-8 rounded-full object-cover ring-1 ring-border" />
+        <Avatar className="h-8 w-8">
+          {avatar ? <AvatarImage src={avatar} /> : null}
+          <AvatarFallback className="text-xs bg-primary/10 text-primary">{user[0]?.toUpperCase()}</AvatarFallback>
+        </Avatar>
         <div className="flex-1">
           <p className="text-sm font-semibold text-foreground">{user}</p>
           <p className="text-[10px] text-muted-foreground">{time}</p>
@@ -60,19 +57,13 @@ const PostCard = ({
       </div>
       {image && <img src={image} alt="" className="w-full aspect-[4/3] object-cover" />}
       <div className="p-3 space-y-2">
-        <p className="text-sm text-foreground leading-relaxed line-clamp-2">{text}</p>
+        <p className="text-sm text-foreground leading-relaxed">{text}</p>
         <div className="flex items-center gap-4">
-          <button
-            onClick={onToggleLike}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
-          >
+          <button onClick={onToggleLike} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
             <Heart className={`h-4 w-4 ${isLiked ? "fill-primary text-primary" : ""}`} />
             <span>{likesCount}</span>
           </button>
-          <button
-            onClick={() => setShowComments(!showComments)}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
-          >
+          <button onClick={handleToggleComments} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
             <MessageCircle className="h-4 w-4" />
             <span>{commentsCount}</span>
           </button>
